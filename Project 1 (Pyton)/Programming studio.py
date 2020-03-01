@@ -17,7 +17,7 @@ def main():
     img_gray = img.convert('L') # converts the image to grayscale image
     # img_bin = img.convert('1') #converts to a binary image, T=128, LOW=0, HIGH=255
     # img_gray.show()
-    # img.show()
+    img.show()
     ONE = 150
     a = np.asarray(img_gray) #from PIL to np array
     a_bin = threshold(a, 100, ONE, 0)
@@ -32,7 +32,6 @@ def main():
     rectangles.show()
 
     moment_calculations(table,img)
-
 
 
 
@@ -246,7 +245,7 @@ def moment_calculations (arr,image):
         #im = image.crop(list[i][2], list[i][4], list[i][1], list[i][3])
         cropped = image.crop(box)
         cropped = cropped.resize((22, 22))
-
+        cropped.show()
         #im.show()
         for j in range(22):
             for k in range(22):
@@ -268,7 +267,10 @@ def moments (arr):
                     rawMoment[i][k]=rawMoment[i][k]+ pow(x,i)*pow(y,k) * arr[x][y]
     x0=rawMoment[1][0]/rawMoment[0][0]
     y0=rawMoment[0][1]/rawMoment[0][0]
-    print("Raw Moments are:",rawMoment)
+    print("Raw Moments are : ",rawMoment[0])
+    print("                 ",rawMoment[1])
+    print("                 ",rawMoment[2])
+    print("                 ",rawMoment[3])
     print()
     centralMoments=[[0,0,0,0],[0,0,0],[0,0],[0]]
     for i in range(len(rawMoment)):
@@ -276,13 +278,19 @@ def moments (arr):
             for x in range(0,22):
                 for y in range(0,22):
                     centralMoments[i][k] = centralMoments[i][k] + pow((x-x0),i)* pow((y-y0),k) * arr[x][y]
-    print("Central Moments are :",centralMoments)
+    print("Central Moments are : ",centralMoments[0])
+    print("                      ",centralMoments[1])
+    print("                      ",centralMoments[2])
+    print("                      ",centralMoments[3])
     normalizedCentralMoments = [[0, 0, 0, 0], [0, 0, 0], [0, 0], [0]]
     print()
     for i in range(len(rawMoment)):
         for k in  range(len(rawMoment[i])):
             normalizedCentralMoments[i][k]= centralMoments[i][k]/pow(centralMoments[0][0],((i+k)/2)+1)
-    print("Normalized Moments are:",normalizedCentralMoments)
+    print("Normalized Moments are : ",normalizedCentralMoments[0])
+    print("                       ",normalizedCentralMoments[1])
+    print("                       ",normalizedCentralMoments[2])
+    print("                       ",normalizedCentralMoments[3])
     print()
     H=[0,0,0,0,0,0,0]
     H[0]=normalizedCentralMoments[2][0]+normalizedCentralMoments[0][2]
@@ -292,7 +300,8 @@ def moments (arr):
     H[4]=(normalizedCentralMoments[3][0]-3*normalizedCentralMoments[1][2])*(normalizedCentralMoments[3][0]+ normalizedCentralMoments[1][2])*(pow(normalizedCentralMoments[3][0]+normalizedCentralMoments[1][2],2)-3*pow(normalizedCentralMoments[2][1]+normalizedCentralMoments[0][3],2))+(3*normalizedCentralMoments[2][1]-normalizedCentralMoments[0][3])*(normalizedCentralMoments[2][1]+normalizedCentralMoments[0][3])*(3*pow(normalizedCentralMoments[3][0]+normalizedCentralMoments[1][2],2)-pow(normalizedCentralMoments[2][1]+normalizedCentralMoments[0][3],2))
     H[5]=(normalizedCentralMoments[2][0]-normalizedCentralMoments[0][2])*(pow(normalizedCentralMoments[3][0]+normalizedCentralMoments[1][2],2)-pow(normalizedCentralMoments[2][1]+normalizedCentralMoments[0][3],2))+4*normalizedCentralMoments[1][1]*(normalizedCentralMoments[3][0]+normalizedCentralMoments[1][2])*(normalizedCentralMoments[2][1]+normalizedCentralMoments[0][3])
     H[6]=(3*normalizedCentralMoments[2][1]-normalizedCentralMoments[3][0])*(normalizedCentralMoments[3][0]+normalizedCentralMoments[1][2])*(pow(normalizedCentralMoments[3][0]+normalizedCentralMoments[1][2],2)-3*pow(normalizedCentralMoments[2][1]+normalizedCentralMoments[0][3],2))+(3*normalizedCentralMoments[1][2]-normalizedCentralMoments[3][0])*(normalizedCentralMoments[2][1]+normalizedCentralMoments[0][3])*(3*pow(normalizedCentralMoments[3][0]+normalizedCentralMoments[1][2],2)-pow(normalizedCentralMoments[2][1]+normalizedCentralMoments[0][3],2))
-
+    print("Hu moments are : ", H)
+    print()
     r_moments=[0,0,0,0,0,0,0,0,0,0]
     r_moments[0]=math.sqrt(H[1])/H[0]
     r_moments[1]=(H[0]+math.sqrt(H[1]))/(H[0]-math.sqrt(H[1]))
@@ -304,9 +313,10 @@ def moments (arr):
     r_moments[7]=abs(H[5])/H[2]*math.sqrt(H[1])
     r_moments[8]=abs(H[5])/math.sqrt(H[1]*abs(H[4]))
     r_moments[9]=abs(H[4])/H[2]*H[3]
+    print("R moments are : ", r_moments)
+    print()
 
-
-    # np.savetxt('raa',r_moments)
+    np.savetxt('raa',r_moments)
     database=np.loadtxt('raa')
 
 # 00
@@ -322,5 +332,5 @@ def moments (arr):
 # 21
 #
 # 30
-if __name__=='__main__':
+if __name__=='__main__' :
     main()
